@@ -26,23 +26,24 @@ public class SecurityConfig {
         @Bean
         public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
             http.csrf(csrf -> csrf.disable())
-                    // Отключаем CSRF-защиту. Она нужна для форм на cookie-сессиях; для чистого REST + JWT обычно не нужна,
-                    // иначе помешает POST/PUT/PATCH/DELETE.почему: JWT, нет cookie-сессии
+                    /** Отключаем CSRF-защиту. Она нужна для форм на cookie-сессиях; для чистого REST + JWT обычно не нужна,
+                    * иначе помешает POST/PUT/PATCH/DELETE.почему: JWT, нет cookie-сессии
+                     */
                     .sessionManagement(sm -> sm.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
         //            Полностью статлесс: сервер не хранит сессию; каждый запрос должен нести JWT.
                     .authorizeHttpRequests(reg -> reg
                             .requestMatchers("/api/auth/**", "/v3/api-docs/**", "/swagger-ui/**", "/swagger-ui.html").permitAll()
                             .anyRequest().authenticated())
-                    /*
-                    Правила доступа:
-                    permitAll() для аутентификации и Swagger/OpenAPI — удобно тестировать без токена.
-                    Любые другие запросы требуют аутентификации (наличие валидного JWT).
+                    /**
+                    * Правила доступа:
+                    * permitAll() для аутентификации и Swagger/OpenAPI — удобно тестировать без токена.
+                    * Любые другие запросы требуют аутентификации (наличие валидного JWT).
                      */
                     .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
-                    /*
-                    Вставляем наш JWT-фильтр перед стандартным UsernamePasswordAuthenticationFilter, чтобы:
-                    вытащить пользователя из токена и положить в SecurityContext
-                    дальнейшие фильтры видели, что пользователь уже аутентифицирован.
+                    /**
+                    * Вставляем наш JWT-фильтр перед стандартным UsernamePasswordAuthenticationFilter, чтобы:
+                    * вытащить пользователя из токена и положить в SecurityContext
+                    * дальнейшие фильтры видели, что пользователь уже аутентифицирован.
                      */
             return http.build(); //Строим финальный SecurityFilterChain — Spring поднимет его как бин.
         }
