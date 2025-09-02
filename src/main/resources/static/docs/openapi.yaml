@@ -1,0 +1,138 @@
+openapi: 3.0.3
+info:
+  title: Bank Cards API
+  version: 1.0.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /api/auth/register:
+    post:
+      summary: Register user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RegisterRequest'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/AuthResponse' } } } }
+  /api/auth/login:
+    post:
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/LoginRequest'
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/AuthResponse' } } } }
+  /api/cards:
+    get:
+      summary: List cards (own for USER, all for ADMIN)
+      parameters:
+        - in: query
+          name: status
+          schema: { type: string, enum: [ACTIVE, BLOCKED, EXPIRED] }
+        - in: query
+          name: last4
+          schema: { type: string }
+        - in: query
+          name: page
+          schema: { type: integer, default: 0 }
+        - in: query
+          name: size
+          schema: { type: integer, default: 10 }
+      responses:
+        '200': { description: OK }
+    post:
+      summary: Create card (ADMIN)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/CardCreateRequest' }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/CardResponse' } } } }
+  /api/cards/{id}:
+    get:
+      summary: Get card
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK, content: { application/json: { schema: { $ref: '#/components/schemas/CardResponse' } } } }
+  /api/cards/{id}/block:
+    patch:
+      summary: Block card (user can request)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+  /api/cards/{id}/activate:
+    patch:
+      summary: Activate card (ADMIN)
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema: { type: integer }
+      responses:
+        '200': { description: OK }
+  /api/transfers:
+    post:
+      summary: Transfer between own cards
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TransferRequest' }
+      responses:
+        '200': { description: OK }
+components:
+  schemas:
+    RegisterRequest:
+      type: object
+      properties:
+        username: { type: string }
+        password: { type: string }
+      required: [username, password]
+    LoginRequest:
+      type: object
+      properties:
+        username: { type: string }
+        password: { type: string }
+      required: [username, password]
+    AuthResponse:
+      type: object
+      properties:
+        token: { type: string }
+    CardCreateRequest:
+      type: object
+      properties:
+        number: { type: string, example: "1111222233334444" }
+        expiry: { type: string, example: "12/29" }
+        initialBalance: { type: number, format: double, example: 100.00 }
+        ownerUsername: { type: string }
+      required: [number, expiry, ownerUsername]
+    CardResponse:
+      type: object
+      properties:
+        id: { type: integer }
+        maskedNumber: { type: string }
+        expiry: { type: string }
+        status: { type: string }
+        balance: { type: number, format: double }
+        owner: { type: string }
+    TransferRequest:
+      type: object
+      properties:
+        fromCardId: { type: integer }
+        toCardId: { type: integer }
+        amount: { type: number, format: double }
+      required: [fromCardId, toCardId, amount]

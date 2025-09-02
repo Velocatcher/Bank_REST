@@ -68,20 +68,25 @@ public class CardService {
         return repo.findAll(PageRequest.of(safePage(page), safeSize(size)));
     }
 
-    /** Блокировка карты (и пользователем, и админом). */
     @Transactional
     public Card block(Long id) {
-        Card c = repo.findById(id).orElseThrow(() -> new NotFoundException("Card not found"));
+        Card c = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("card not found"));
         c.setStatus(CardStatus.BLOCKED);
-        return c;
+        repo.save(c);
+        // перечитываем уже с подгруженным owner
+        return repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("card not found"));
     }
 
-    /** Активация карты (доступно админу). */
     @Transactional
     public Card activate(Long id) {
-        Card c = repo.findById(id).orElseThrow(() -> new NotFoundException("Card not found"));
+        Card c = repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("card not found"));
         c.setStatus(CardStatus.ACTIVE);
-        return c;
+        repo.save(c);
+        return repo.findById(id)
+                .orElseThrow(() -> new NotFoundException("card not found"));
     }
 
     @Transactional
@@ -105,5 +110,8 @@ public class CardService {
     private void validateExpiry(String expiry) {
         if (expiry == null || !expiry.matches("(0[1-9]|1[0-2])\\/\\d{2}"))
             throw new BadRequestException("expiry must be MM/yy");
+    }
+    public Card findByIdOr404(Long id) {
+        return repo.findById(id).orElseThrow(() -> new NotFoundException("Card not found"));
     }
 }

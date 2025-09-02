@@ -10,8 +10,10 @@ spring:
       hibernate:
         format_sql: true
     open-in-view: false #предотвращаем N+1 ленивых загрузок на уровне web
+
   liquibase:
-    change-log: classpath:/db/migration/master.xml
+    change-log: classpath:db/migration/db.changelog-master.yaml
+    contexts: dev
 
 #dev-заглушки, в проде хранить в секретах
 app:
@@ -19,7 +21,12 @@ app:
     jwt-secret: "changeme-please-32-bytes-minimum-secret-key"
     jwt-exp-min: 120
   crypto:
-    aes-key-base64: "dGVzdGluZy1rZXktMzItYnl0ZXMtYmFzZTY0IQ=="
+    aes-key-base64: "3Ju/4BZDL+OaMu5wn4SkMqZ/85nZ72EVwuYoVu8kQsg="
 
 server:
   port: 8080
+logging:
+  level:
+    org.springframework.security: INFO
+
+

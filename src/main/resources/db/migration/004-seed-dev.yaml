@@ -1,0 +1,64 @@
+# Начальные данные (ТОЛЬКО для dev). С откатами. MySQL.
+databaseChangeLog:
+  - changeSet:
+      id: 004-seed-dev
+      author: cc
+      context: dev
+      changes:
+        # Users (пароль = "12345678"; BCrypt для DEV)
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 1 }
+              - column: { name: username, value: "admin" }
+              - column: { name: password, value: "$2a$10$NcUwEh0yBIKoKTX2j6LY8OEsaGRBoSZpbDujDQDO9AEGRjW3A8yXC" }
+
+        - insert:
+            tableName: users
+            columns:
+              - column: { name: id, valueNumeric: 2 }
+              - column: { name: username, value: "user" }
+              - column: { name: password, value: "$2a$10$NcUwEh0yBIKoKTX2j6LY8OEsaGRBoSZpbDujDQDO9AEGRjW3A8yXC" }
+
+        # Roles
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: user_id, valueNumeric: 1 }
+              - column: { name: role, value: "ADMIN" }
+
+        - insert:
+            tableName: user_roles
+            columns:
+              - column: { name: user_id, valueNumeric: 2 }
+              - column: { name: role, value: "USER" }
+
+        # Cards (примерные данные; enc_number — заглушка формата iv:cipher)
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueNumeric: 100 }
+              - column: { name: enc_number, value: "bW9ja0lWOm1vY2tDaXBoZXI=" }
+              - column: { name: last4, value: "1111" }
+              - column: { name: owner_id, valueNumeric: 2 }
+              - column: { name: expiry, value: "12/29" }
+              - column: { name: status, value: "ACTIVE" }
+              - column: { name: balance, valueNumeric: 1000.00 }
+              - column: { name: created_at, valueComputed: NOW() }
+
+        - insert:
+            tableName: cards
+            columns:
+              - column: { name: id, valueNumeric: 101 }
+              - column: { name: enc_number, value: "bW9ja0lWOm1vY2tDaXBoZXIy" }
+              - column: { name: last4, value: "2222" }
+              - column: { name: owner_id, valueNumeric: 2 }
+              - column: { name: expiry, value: "11/28" }
+              - column: { name: status, value: "ACTIVE" }
+              - column: { name: balance, valueNumeric: 250.00 }
+              - column: { name: created_at, valueComputed: NOW() }
+
+      rollback:
+        - delete: { tableName: cards, where: "id IN (100,101)" }
+        - delete: { tableName: user_roles, where: "(user_id=1 AND role='ADMIN') OR (user_id=2 AND role='USER')" }
+        - delete: { tableName: users, where: "id IN (1,2)" }

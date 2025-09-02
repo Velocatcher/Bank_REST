@@ -1,0 +1,57 @@
+# CARDS (enc_number + last4) с FK/индексами и откатами
+databaseChangeLog:
+  - changeSet:
+      id: 002-cards
+      author: cc
+      preConditions:
+        onFail: MARK_RAN
+        not:
+          tableExists:
+            tableName: cards
+      changes:
+        - createTable:
+            tableName: cards
+            columns:
+              - column: { name: id, type: BIGINT, autoIncrement: true, constraints: { primaryKey: true, nullable: false } }
+              - column: { name: enc_number, type: "VARCHAR(512)", constraints: { nullable: false } }
+              - column: { name: last4, type: "CHAR(4)", constraints: { nullable: false } }
+              - column: { name: owner_id, type: BIGINT, constraints: { nullable: false } }
+              - column: { name: expiry, type: "CHAR(5)", constraints: { nullable: false } }
+              - column: { name: status, type: "VARCHAR(10)", constraints: { nullable: false } }
+              - column: { name: balance, type: "DECIMAL(19,2)", defaultValueNumeric: 0 }
+              - column: { name: created_at, type: DATETIME, constraints: { nullable: false } }
+
+        - addForeignKeyConstraint:
+            baseTableName: cards
+            baseColumnNames: owner_id
+            referencedTableName: users
+            referencedColumnNames: id
+            onDelete: RESTRICT
+            constraintName: fk_cards_owner_id     # <-- добавили имя
+
+        - createIndex:
+            tableName: cards
+            indexName: ix_cards_owner
+            columns:
+              - column: { name: owner_id }
+
+        - createIndex:
+            tableName: cards
+            indexName: ix_cards_owner_status
+            columns:
+              - column: { name: owner_id }
+              - column: { name: status }
+
+        - createIndex:
+            tableName: cards
+            indexName: ix_cards_owner_last4
+            columns:
+              - column: { name: owner_id }
+              - column: { name: last4 }
+
+      rollback:
+        - dropIndex: { indexName: ix_cards_owner_last4, tableName: cards }
+        - dropIndex: { indexName: ix_cards_owner_status, tableName: cards }
+        - dropIndex: { indexName: ix_cards_owner, tableName: cards }
+        - dropForeignKeyConstraint: { baseTableName: cards, constraintName: fk_cards_owner_id }
+        - dropTable: { tableName: cards }

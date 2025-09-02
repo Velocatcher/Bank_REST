@@ -1,0 +1,9 @@
+databaseChangeLog:
+  - include:
+      file: db/migration/001-users.yaml
+  - include:
+      file: db/migration/002-cards.yaml
+  - include:
+      file: db/migration/003-transfers.yaml
+  - include:
+      file: db/migration/004-seed-dev.yaml

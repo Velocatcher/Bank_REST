@@ -26,13 +26,13 @@ public class Card {
 
     @Column(name = "enc_number", nullable = false, length = 512)
     private String encNumber;
-    @Column(name = "last4", nullable = false, length = 4)
+    @Column(name = "last4", columnDefinition = "CHAR(4)", nullable = false, length = 4)
     private String last4;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "owner_id")
     private User owner;
-    @Column(nullable = false, length = 5)
+    @Column(name = "expiry", columnDefinition = "CHAR(5)", nullable = false)
     private String expiry;
 
     @Column(nullable = false, length = 10)
