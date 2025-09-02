@@ -115,36 +115,36 @@ src/main/resources/
 
 ## Конфигурация (пример `application.yml`)
 
-spring:
-  datasource:
-    url: jdbc:mysql://localhost:3306/bankcards?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC
-    username: root
-    password: GOlden
-  jpa:
-    hibernate:
-      ddl-auto: validate #схему ведёт Liquibase, не Hibernate.
-    properties:
-      hibernate:
-        format_sql: true
-    open-in-view: false #предотвращаем N+1 ленивых загрузок на уровне web
+spring:  
+  datasource:  
+    url: jdbc:mysql://localhost:3306/bankcards?useSSL=false&allowPublicKeyRetrieval=true&serverTimezone=UTC  
+    username: root  
+    password: GOlden  
+  jpa:  
+    hibernate:  
+      ddl-auto: validate #схему ведёт Liquibase, не Hibernate.  
+    properties:  
+      hibernate:  
+        format_sql: true  
+    open-in-view: false #предотвращаем N+1 ленивых загрузок на уровне web  
 
-  liquibase:
-    change-log: classpath:db/migration/db.changelog-master.yaml
-    contexts: dev
+  liquibase:  
+    change-log: classpath:db/migration/db.changelog-master.yaml  
+    contexts: dev  
 
-#dev-заглушки, в проде хранить в секретах
-app:
-  security:
-    jwt-secret: "changeme-please-32-bytes-minimum-secret-key"
-    jwt-exp-min: 120
-  crypto:
-    aes-key-base64: "3Ju/4BZDL+OaMu5wn4SkMqZ/85nZ72EVwuYoVu8kQsg="
+#dev-заглушки, в проде хранить в секретах  
+app:  
+  security:  
+    jwt-secret: "changeme-please-32-bytes-minimum-secret-key"  
+    jwt-exp-min: 120  
+  crypto:  
+    aes-key-base64: "3Ju/4BZDL+OaMu5wn4SkMqZ/85nZ72EVwuYoVu8kQsg="  
 
-server:
-  port: 8080
-logging:
-  level:
-    org.springframework.security: INFO
+server:  
+  port: 8080  
+logging:  
+  level:  
+    org.springframework.security: INFO  
 
 
 
