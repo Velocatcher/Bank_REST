@@ -17,9 +17,7 @@ import org.springframework.security.web.SecurityFilterChain;
 @EnableMethodSecurity
 public class SecurityConfig {
 
-//    private final JwtAuthFilter jwtAuthFilter;
-
-    public SecurityConfig() {}
+public SecurityConfig() {}
 
     @Bean
     public PasswordEncoder passwordEncoder() { return new BCryptPasswordEncoder(10); }
@@ -54,6 +52,3 @@ public class SecurityConfig {
     }
 
     }
-
-
-

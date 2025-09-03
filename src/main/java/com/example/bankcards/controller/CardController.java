@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/cards")
-public class CardController { // <-- имя класса должно совпадать с именем файла
+public class CardController {
 
     private final CardService cardService;
 

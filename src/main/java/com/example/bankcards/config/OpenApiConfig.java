@@ -22,7 +22,7 @@ import org.springframework.context.annotation.Configuration;
 public class OpenApiConfig {
     @Bean
     public OpenAPI openAPI() {
-        // почему: читаемая шапка в Swagger UI и машиночитаемая мета информация
+        // читаемая шапка в Swagger UI и машиночитаемая мета информация
         return new OpenAPI().info(new Info()
                 .title("Bank Cards API")
                 .version("1.0.0")
